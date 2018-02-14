@@ -2,7 +2,7 @@
 #include <strings.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#define PORT 8080
+#define PORT 1337
 
 int hostfd, clientfd;
 struct sockaddr_in server_addr;
@@ -17,7 +17,7 @@ int main()
 	// set server info
 	server_addr.sin_family = AF_INET;		// IPv4
 	server_addr.sin_addr.s_addr = INADDR_ANY;	// 0.0.0.0
-	server_addr.sin_port = htons(PORT);		// Port number (8080)
+	server_addr.sin_port = htons(PORT);		// Port number (1337)
 
 	// bind socket
 	// bind(int sockfd, const struct sockaddr *addr,socklen_t addrlen);
