@@ -6,7 +6,7 @@
 #define RHOST "10.11.1.5"	/* Remote host */
 #define RPORT 8443		/* Remote port */
 
-int hostfd
+int hostfd;
 struct sockaddr_in server_addr;
 
 int main()
