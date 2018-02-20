@@ -3,7 +3,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define RHOST "10.11.1.5"	/* Remote host */
+#define RHOST "127.0.0.1"	/* Remote host */
 #define RPORT 8443		/* Remote port */
 
 int hostfd;
@@ -18,8 +18,8 @@ int main()
 
 	// set server info
 	server_addr.sin_family = AF_INET;		// IPv4
-	server_addr.sin_addr.s_addr = inet_addr(RHOST);	// 10.11.1.5
-	server_addr.sin_port = htons(RPORT);		// Port number (8888)
+	server_addr.sin_addr.s_addr = inet_addr(RHOST);	// 127.0.0.1
+	server_addr.sin_port = htons(RPORT);		// Port number (8443)
 
 	// connect
 	// connect(int sockfd, const struct sockaddr *addr,socklen_t addrlen);
