@@ -2,7 +2,7 @@
 
 Bind TCP Shellcode
 Size: 98 bytes
-Listens on port 1337
+Listens on port 1337 (\x05\x39)
 
 => 0x08048080 <+0>:	xor    eax,eax
    0x08048082 <+2>:	xor    ebx,ebx
