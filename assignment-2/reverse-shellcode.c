@@ -1,6 +1,7 @@
 /*
 Reverse TCP Shellcode
 Size: 76 bytes
+Connects to port 1337
 
 Dump of assembler code for function _start:
 => 0x08048080 <+0>:	xor    eax,eax
