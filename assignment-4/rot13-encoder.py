@@ -28,8 +28,8 @@ for i in bytearray(shellcode):
 		if (j == x):
 			print '[!] Bad Character Warning [!]' 
 
-enc_1 = ("".join("\\x%02x" %c for c in enc_1))
-enc_2 = (", ".join("0x%02x" %c for c in enc_2))
+enc_1 = ("".join("\\x%02x" %c for c in enc_1))  # shellcode
+enc_2 = (", ".join("0x%02x" %c for c in enc_2)) # stub
 
 print '[*] Encoded Shellcode: \n' + enc_1
 print '[*] Assembly Ready Shellcode: \n' + enc_2
